@@ -20,15 +20,36 @@ struct ARViewContainer: UIViewRepresentable {
         
         let arView = ARView(frame: .zero)
         
-        // Load the "Box" scene from the "Experience" Reality File
-        let boxAnchor = try! Experience.loadBox()
-        
-        // Add the box anchor to the scene
-        arView.scene.anchors.append(boxAnchor)
+        let textAnchor = AnchorEntity()
+        textAnchor.addChild(textGen(textString: "Testing"))
+        arView.scene.addAnchor(textAnchor)
         
         return arView
         
     }
+    
+    func textGen(textString: String) -> ModelEntity {
+        
+        let materialVar = SimpleMaterial(color: .black, roughness: 0, isMetallic: false)
+        
+        let depthVar: Float = 0.001
+        let fontVar = UIFont.systemFont(ofSize: 0.01)
+        let containerFrameVar = CGRect(x: -0.05, y: -0.1, width: 0.1, height: 0.1)
+        let alignmentVar: CTTextAlignment = .center
+        let lineBreakModeVar : CTLineBreakMode = .byWordWrapping
+        
+        let textMeshResource : MeshResource = .generateText(textString,
+                                           extrusionDepth: depthVar,
+                                           font: fontVar,
+                                           containerFrame: containerFrameVar,
+                                           alignment: alignmentVar,
+                                           lineBreakMode: lineBreakModeVar)
+        
+        let textEntity = ModelEntity(mesh: textMeshResource, materials: [materialVar])
+        
+        return textEntity
+    }
+    
     
     func updateUIView(_ uiView: ARView, context: Context) {}
     
